@@ -9,16 +9,18 @@ import {
 > If an element of the options array is a simple string, 
 the string itself will be considered as the option label.
 Otherwise the element needs to be an object with a 'label' key.
- */
+*/
+
 const Multiselect = (props) => {
   const {
     sx,
+    fullWidth,
     id,
     label,
     limitTags,
     options,
     onChange,
-    value,
+    value
   } = props;
 
   const SELECT_ALL_LABEL = "Select All";
@@ -27,22 +29,11 @@ const Multiselect = (props) => {
     label: SELECT_ALL_LABEL,
     value: SELECT_ALL_VALUE,
   };
-  
+
   const allSelected = options.length === value.length;
 
   const getOptionLabel = (option) =>
     typeof option === "string" ? option : option.label;
-
-  const renderOption = (props, option, { selected }) => {
-    const selectAllProps =
-      option.value === SELECT_ALL_VALUE ? { checked: allSelected } : {};
-    return (
-      <li {...props}>
-        <Checkbox checked={selected} {...selectAllProps} />
-        {getOptionLabel(option)}
-      </li>
-    );
-  };
 
   const renderInput = (params) => <TextField {...params} label={label} />;
 
@@ -60,21 +51,34 @@ const Multiselect = (props) => {
     const filteredResults = removeSelectAllOption(
       defaultFilter(options, params)
     );
-    return [SELECT_ALL_OPTION, ...filteredResults];
+    return filteredResults.length > 0
+      ? [SELECT_ALL_OPTION, ...filteredResults]
+      : [];
+  };
+
+  const renderOption = (props, option, { selected }) => {
+    const selectAllProps =
+      option.value === SELECT_ALL_VALUE ? { checked: allSelected } : {};
+    return (
+      <li {...props}>
+        <Checkbox checked={selected} {...selectAllProps} />
+        {getOptionLabel(option)}
+      </li>
+    );
   };
 
   const handleChange = (event, values, reason, details) => {
-    console.log("Multiselect handleChange", {event, values, reason, details});
-    
+    console.log("Multiselect handleChange", { event, values, reason, details });
+
     const selectAll = details && details.option.value === SELECT_ALL_VALUE;
 
     if (selectAll) {
-      if (!allSelected) {
-        // console.log("Select all checked");
-        onChange(event, options);
-      } else {
-        // console.log("Select all unchecked");
+      if (allSelected) {
+        console.log("Select all unchecked");
         onChange(event, []);
+      } else {
+        console.log("Select all checked");
+        onChange(event, options);
       }
     } else {
       console.log("Select All NOT involved");
@@ -82,7 +86,7 @@ const Multiselect = (props) => {
     }
   };
 
-  console.log({value, allSelected});
+  console.log({ value, allSelected });
   return (
     <Autocomplete
       multiple
@@ -95,6 +99,7 @@ const Multiselect = (props) => {
       filterOptions={filterOptions}
       /* modifiable with props */
       sx={sx}
+      fullWidth={fullWidth}
       id={id}
       limitTags={limitTags}
       options={options}
