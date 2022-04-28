@@ -16,7 +16,7 @@ const TestMultiselect = () => {
   const [options, setOptions] = useState([]);
 
   // dummy props
-  const sxStyles = { width: "300px" };
+  const sxStyles = {minWidth: "500px"};
   const id = "fruits-select";
   const label = "Fruits";
   const limitTags = 2;
@@ -49,6 +49,7 @@ const TestMultiselect = () => {
         <Multiselect
           sx={sxStyles}
           id={id}
+          fullWidth={true}
           label={label}
           limitTags={limitTags}
           options={options}
@@ -61,7 +62,7 @@ const TestMultiselect = () => {
         <p style={{ width: "500px" }}>
           {selected.length
             ? selected
-                .map((e) => `<${e.label} - ${e.type} - ${e.color} >`)
+                .map((e) => typeof e === "string" ? e : JSON.stringify(e))
                 .join(", ")
             : "none"}
         </p>
@@ -71,38 +72,3 @@ const TestMultiselect = () => {
 };
 
 export default TestMultiselect;
-
-// const TestMultiselect = () => {
-//   const [selected, setSelected] = useState([]);
-
-//   // dummy props
-//   const sxStyles = { width: "250px" };
-//   const id = "fruits-select";
-//   const label = "Fruits";
-//   const limitTags = 2;
-//   const options = ["Apple", "Orange", "Banana", "Grapes", "Pineapple"];
-//   const handleChange = (event, value) => {
-//     console.log("handle Change", value);
-//     setSelected(value);
-//   };
-
-//   return (
-//     <Container>
-//       <Stack m={3} direction="row" spacing={3}>
-//         <Multiselect
-//           sx={sxStyles}
-//           id={id}
-//           label={label}
-//           limitTags={limitTags}
-//           options={options}
-//           onChange={handleChange}
-//           value={selected}
-//         />
-//         <div
-//           style={{ height: "100px", width: "2px", background: "black" }}
-//         ></div>
-//         <p>{selected.length ? selected.join(", ") : "none"}</p>
-//       </Stack>
-//     </Container>
-//   );
-// };
