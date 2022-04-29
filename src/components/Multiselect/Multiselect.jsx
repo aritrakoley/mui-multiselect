@@ -4,12 +4,15 @@ import {
   TextField,
   createFilterOptions,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 /*
 > If an element of the options array is a simple string, 
 the string itself will be considered as the option label.
 Otherwise the element needs to be an object with a 'label' key.
 */
+// `Select All` will only select filtered options
+// IMPORTANT: Produces a console error on first search which I could not resolve
+
 
 const Multiselect = (props) => {
   const { sx, fullWidth, id, label, limitTags, options, onChange, value } =
@@ -26,6 +29,10 @@ const Multiselect = (props) => {
   };
 
   const allSelected = filtered.length === value.length;
+
+  useEffect(() => {
+    setFiltered([...options]);
+  }, [options]);
 
   const getOptionLabel = (option) =>
     typeof option === "string" ? option : option.label;
