@@ -4,7 +4,7 @@ import {
   TextField,
   createFilterOptions,
 } from "@mui/material";
-
+import { useState } from "react";
 /*
 > If an element of the options array is a simple string, 
 the string itself will be considered as the option label.
@@ -12,16 +12,11 @@ Otherwise the element needs to be an object with a 'label' key.
 */
 
 const Multiselect = (props) => {
-  const {
-    sx,
-    fullWidth,
-    id,
-    label,
-    limitTags,
-    options,
-    onChange,
-    value
-  } = props;
+  const { sx, fullWidth, id, label, limitTags, options, onChange, value } =
+    props;
+
+  const [input, setInput] = useState("");
+  const [filtered, setFiltered] = useState([]);
 
   const SELECT_ALL_LABEL = "Select All";
   const SELECT_ALL_VALUE = "__select-all__";
@@ -30,7 +25,7 @@ const Multiselect = (props) => {
     value: SELECT_ALL_VALUE,
   };
 
-  const allSelected = options.length === value.length;
+  const allSelected = filtered.length === value.length;
 
   const getOptionLabel = (option) =>
     typeof option === "string" ? option : option.label;
@@ -51,6 +46,12 @@ const Multiselect = (props) => {
     const filteredResults = removeSelectAllOption(
       defaultFilter(options, params)
     );
+
+    if (input !== params.inputValue) {
+      setInput(params.inputValue);
+      setFiltered(filteredResults);
+    }
+
     return filteredResults.length > 0
       ? [SELECT_ALL_OPTION, ...filteredResults]
       : [];
@@ -68,25 +69,25 @@ const Multiselect = (props) => {
   };
 
   const handleChange = (event, values, reason, details) => {
-    console.log("Multiselect handleChange", { event, values, reason, details });
+    // console.log("Multiselect handleChange", { event, values, reason, details });
 
     const selectAll = details && details.option.value === SELECT_ALL_VALUE;
 
     if (selectAll) {
       if (allSelected) {
-        console.log("Select all unchecked");
+        // console.log("Select all unchecked");
         onChange(event, []);
       } else {
-        console.log("Select all checked");
-        onChange(event, options);
+        // console.log("Select all checked");
+        onChange(event, filtered);
       }
     } else {
-      console.log("Select All NOT involved");
+      // console.log("Select All NOT involved");
       onChange(event, values);
     }
   };
 
-  console.log({ value, allSelected });
+  // console.log({ value, allSelected, filtered });
   return (
     <Autocomplete
       multiple
